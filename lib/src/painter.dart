@@ -1,3 +1,4 @@
+import 'dart:ui' show PathMetric;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'types.dart';
@@ -75,6 +76,32 @@ class WxLinePainter extends CustomPainter {
       canvas.drawLine(rect.centerLeft, rect.centerRight, paint);
       return;
     }
+
+    final source = Path()
+      ..moveTo(0, size.height / 2)
+      ..lineTo(size.width, size.height / 2);
+    final Path dest = Path();
+    for (final PathMetric metric in source.computeMetrics()) {
+      int index = 0;
+      double distance = 0;
+      bool draw = true;
+      while (distance < metric.length) {
+        if (index >= pattern.length) {
+          index = 0;
+        }
+        final double len = pattern[index++] * width;
+        if (draw) {
+          dest.addPath(
+            metric.extractPath(distance, distance + len),
+            Offset.zero,
+          );
+        }
+        distance += len;
+        draw = !draw;
+      }
+    }
+
+    canvas.drawPath(dest, paint);
   }
 
   @override
