@@ -13,11 +13,12 @@ class WxDivider extends StatelessWidget {
   /// - [pattern]: The circular list of doubles defining the on/off length of the divider pattern.
   ///   Defaults to `WxDivider.solid`.
   /// - [direction]: The direction of the divider. Defaults to `Axis.horizontal`.
-  /// - [color]: The color of this side of the divider. Overrides if gradient is not null.
+  /// - [color]: The color of this side of the divider. Overrides if gradient is not `null`.
   /// - [gradient]: A gradient to use for painting the divider.
   /// - [thickness]: The thickness of the line drawn within the divider.
   /// - [lines]: The number of lines to draw. Defaults to 1.
   /// - [spacing]: The spacing between lines. Defaults to 2.0.
+  /// - [indent]: The amount of indent applied to the divider on each side.
   /// - [formatter]: A callback that allows customization of the paint object before drawing.
   /// - [align]: The alignment of the child widget within the divider. Defaults to `WxDividerAlign.center`.
   /// - [child]: The widget to display within the divider.
@@ -32,9 +33,11 @@ class WxDivider extends StatelessWidget {
     this.spacing,
     this.formatter,
     this.align = WxDividerAlign.center,
+    this.indent,
     this.child,
   })  : assert(thickness == null || thickness > 0),
-        assert(lines == null || lines > 0);
+        assert(lines == null || lines > 0),
+        assert(spacing == null || spacing >= 0);
 
   /// A constant representing a solid divider style.
   static const solid = WxDividerPainter.solid;
@@ -54,7 +57,7 @@ class WxDivider extends StatelessWidget {
   /// The direction of the divider.
   final Axis direction;
 
-  /// The color of this side of the divider. Overrides if gradient not null
+  /// The color of this side of the divider. Overrides if gradient not `null`.
   final Color? color;
 
   /// A gradient to use for painting the divider.
@@ -68,6 +71,9 @@ class WxDivider extends StatelessWidget {
 
   /// The spacing between lines.
   final double? spacing;
+
+  /// The amount of indent applied to the divider on each side.
+  final EdgeInsetsGeometry? indent;
 
   /// A callback that allows customization of the paint object before drawing.
   final PaintFormatter? formatter;
@@ -84,12 +90,18 @@ class WxDivider extends StatelessWidget {
   /// Whether the divider direction is vertical.
   bool get isVertical => !isHorizontal;
 
+  /// The amount of indent applied to the divider on each side.
+  EdgeInsetsGeometry get defaultIndent => isHorizontal
+      ? const EdgeInsets.symmetric(vertical: 8)
+      : const EdgeInsets.symmetric(horizontal: 8);
+
   @override
   Widget build(BuildContext context) {
     final effectiveColor = color ?? const Color(0xFF000000);
     final effectiveThickness = thickness ?? 1;
     final effectiveCount = lines ?? 1;
     final effectiveSpacing = spacing ?? 2.0;
+    final effectiveIndent = indent ?? defaultIndent;
 
     // Build single line
     Widget result = CustomPaint(
@@ -107,7 +119,12 @@ class WxDivider extends StatelessWidget {
     );
 
     // Returns single line
-    if (effectiveCount == 1) return result;
+    if (effectiveCount == 1) {
+      return Padding(
+        padding: effectiveIndent,
+        child: result,
+      );
+    }
 
     // Build multiple lines
     result = Flex(
@@ -128,17 +145,25 @@ class WxDivider extends StatelessWidget {
     );
 
     // Returns without child
-    if (child == null) return result;
+    if (child == null) {
+      return Padding(
+        padding: effectiveIndent,
+        child: result,
+      );
+    }
 
     // Returns with child
-    return Flex(
-      direction: direction,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (align != WxDividerAlign.start) Expanded(child: result),
-        child!,
-        if (align != WxDividerAlign.end) Expanded(child: result),
-      ],
+    return Padding(
+      padding: effectiveIndent,
+      child: Flex(
+        direction: direction,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (align != WxDividerAlign.start) Expanded(child: result),
+          child!,
+          if (align != WxDividerAlign.end) Expanded(child: result),
+        ],
+      ),
     );
   }
 }
