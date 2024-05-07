@@ -2,7 +2,25 @@ import 'package:flutter/widgets.dart';
 import 'package:wx_divider/src/painter.dart';
 import 'types.dart';
 
+/// A widget that displays a divider with a configurable style, pattern, and child.
+///
+/// A divider can be used to visually separate sections of content. It can be
+/// horizontal or vertical, with a solid, dotted, dashed, or Morse code-like pattern.
+/// You can also customize the color, thickness, and number of lines.
 class WxDivider extends StatelessWidget {
+  /// Creates a divider widget.
+  ///
+  /// - [pattern]: The circular list of doubles defining the on/off length of the divider pattern.
+  ///   Defaults to `WxDivider.solid`.
+  /// - [direction]: The direction of the divider. Defaults to `Axis.horizontal`.
+  /// - [color]: The color of this side of the divider. Overrides if gradient is not null.
+  /// - [gradient]: A gradient to use for painting the divider.
+  /// - [thickness]: The thickness of the line drawn within the divider.
+  /// - [lines]: The number of lines to draw. Defaults to 1.
+  /// - [spacing]: The spacing between lines. Defaults to 2.0.
+  /// - [formatter]: A callback that allows customization of the paint object before drawing.
+  /// - [align]: The alignment of the child widget within the divider. Defaults to `WxDividerAlign.center`.
+  /// - [child]: The widget to display within the divider.
   const WxDivider({
     super.key,
     this.pattern = WxDivider.solid,
@@ -18,48 +36,52 @@ class WxDivider extends StatelessWidget {
   })  : assert(thickness == null || thickness > 0),
         assert(lines == null || lines > 0);
 
-  /// A constant representing a solid border style.
+  /// A constant representing a solid divider style.
   static const solid = WxDividerPainter.solid;
 
-  /// A constant representing a dotted border style.
+  /// A constant representing a dotted divider style.
   static const dotted = WxDividerPainter.dotted;
 
-  /// A constant representing a dashed border style.
+  /// A constant representing a dashed divider style.
   static const dashed = WxDividerPainter.dashed;
 
-  /// A constant representing a Morse code-like border style.
+  /// A constant representing a Morse code-like divider style.
   static const morse = WxDividerPainter.morse;
 
-  /// The circular list of doubles defining the on/off length of the border pattern.
+  /// The circular list of doubles defining the on/off length of the divider pattern.
   final List<double> pattern;
 
+  /// The direction of the divider.
   final Axis direction;
 
-  /// The color of this side of the border. overrides if gradient not null
+  /// The color of this side of the divider. Overrides if gradient not null
   final Color? color;
 
-  /// A gradient to use for painting the border.
+  /// A gradient to use for painting the divider.
   final Gradient? gradient;
 
   /// The thickness of the line drawn within the divider.
   final double? thickness;
 
-  /// Lines count
+  /// The number of lines to draw.
   final int? lines;
 
-  /// Lines spacing
+  /// The spacing between lines.
   final double? spacing;
 
-  /// Paint formatter
+  /// A callback that allows customization of the paint object before drawing.
   final PaintFormatter? formatter;
 
-  /// child align
+  /// The alignment of the child widget within the divider.
   final WxDividerAlign align;
 
+  /// The widget to display within the divider.
   final Widget? child;
 
+  /// Whether the divider direction is horizontal.
   bool get isHorizontal => direction == Axis.horizontal;
 
+  /// Whether the divider direction is vertical.
   bool get isVertical => !isHorizontal;
 
   @override
@@ -121,7 +143,11 @@ class WxDivider extends StatelessWidget {
   }
 }
 
+/// A convenience widget that creates a vertical divider using a `WxDivider` with a fixed direction.
 class WxVerticalDivider extends WxDivider {
+  /// Creates a vertical divider widget.
+  ///
+  /// The same parameters as `WxDivider` apply.
   const WxVerticalDivider({
     super.key,
     super.pattern = WxDivider.solid,
@@ -135,15 +161,15 @@ class WxVerticalDivider extends WxDivider {
     super.child,
   }) : super(direction: Axis.vertical);
 
-  /// A constant representing a solid border style.
+  /// A constant representing a solid divider style.
   static const solid = WxDividerPainter.solid;
 
-  /// A constant representing a dotted border style.
+  /// A constant representing a dotted divider style.
   static const dotted = WxDividerPainter.dotted;
 
-  /// A constant representing a dashed border style.
+  /// A constant representing a dashed divider style.
   static const dashed = WxDividerPainter.dashed;
 
-  /// A constant representing a Morse code-like border style.
+  /// A constant representing a Morse code-like divider style.
   static const morse = WxDividerPainter.morse;
 }

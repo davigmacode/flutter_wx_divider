@@ -2,14 +2,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'types.dart';
 
-/// A custom painter class that draws a border based on a provided `ShapeBorder` object.
-///
-/// This class is used internally by the [WxBorder] widget. It takes a `ShapeBorder` and an optional
-/// `textDirection` as parameters, and draws the border shape on the canvas.
+/// A custom painter that draws a divider with a configurable style and pattern.
 class WxDividerPainter extends CustomPainter {
-  /// Creates a new [WxDividerPainter] instance.
+  /// Creates a divider painter with the provided configurations.
   ///
-  /// [shape] is required.
+  /// - [pattern]: The circular list of doubles defining the on/off length of the divider pattern.
+  ///   Defaults to `WxDividerPainter.solid`.
+  /// - [direction]: The direction of the divider. Defaults to `Axis.horizontal`.
+  /// - [color]: The color of the divider. Defaults to `black`.
+  /// - [gradient]: A gradient to use for painting the divider.
+  /// - [thickness]: The thickness of the line drawn within the divider. Defaults to 1.0.
+  /// - [formatter]: A callback that allows customization of the paint object before drawing.
   WxDividerPainter({
     this.pattern = WxDividerPainter.solid,
     this.direction = Axis.horizontal,
@@ -21,43 +24,46 @@ class WxDividerPainter extends CustomPainter {
         assert(pattern.first > 0 || pattern.length > 1,
             'If the pattern has only a single value, it must be greater than 0');
 
-  /// A constant representing a solid border style.
+  /// A constant representing a solid divider style.
   static const solid = [1.0, 0.0];
 
-  /// A constant representing a dotted border style.
+  /// A constant representing a dotted divider style.
   static const dotted = [1.0, 2.0];
 
-  /// A constant representing a dashed border style.
+  /// A constant representing a dashed divider style.
   static const dashed = [3.0, 2.0];
 
-  /// A constant representing a Morse code-like border style.
+  /// A constant representing a Morse code-like divider style.
   static const morse = [3.0, 2.0, 1.0, 2.0];
 
-  /// The list of doubles defining the on/off durations of the border pattern.
+  /// The circular list of doubles defining the on/off length of the divider pattern.
   final List<double> pattern;
 
+  /// The direction of the divider.
   final Axis direction;
 
-  /// The color of this side of the border.
+  /// The color of this side of the divider.
   final Color color;
 
-  /// A gradient to use for painting the border.
+  /// A gradient to use for painting the divider.
   final Gradient? gradient;
 
   /// The thickness of the line drawn within the divider.
   final double thickness;
 
-  /// Paint formatter
+  /// A callback that allows customization of the paint object before drawing.
   final PaintFormatter? formatter;
 
-  /// Checks if the border style is solid (pattern is equal to `WxBorderStyle.solid.pattern`).
+  /// Whether the divider style is solid (pattern is equal to `solid.pattern`).
   bool get isSolid => listEquals(pattern, solid);
 
-  /// Checks if the border style is non-solid (not equal to `WxBorderStyle.solid.pattern`).
+  /// Whether the divider style is non-solid (not equal to `solid.pattern`).
   bool get isNonSolid => !isSolid;
 
+  /// Whether the divider direction is horizontal.
   bool get isHorizontal => direction == Axis.horizontal;
 
+  /// Whether the divider direction is vertical.
   bool get isVertical => !isHorizontal;
 
   @override
