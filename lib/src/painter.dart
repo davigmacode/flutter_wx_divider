@@ -6,12 +6,12 @@ import 'types.dart';
 ///
 /// This class is used internally by the [WxBorder] widget. It takes a `ShapeBorder` and an optional
 /// `textDirection` as parameters, and draws the border shape on the canvas.
-class WxLinePainter extends CustomPainter {
-  /// Creates a new [WxLinePainter] instance.
+class WxDividerPainter extends CustomPainter {
+  /// Creates a new [WxDividerPainter] instance.
   ///
   /// [shape] is required.
-  WxLinePainter({
-    this.pattern = WxLinePainter.solid,
+  WxDividerPainter({
+    this.pattern = WxDividerPainter.solid,
     this.color = const Color(0xFF000000),
     this.gradient,
     this.thickness = 1,
@@ -92,8 +92,9 @@ class WxLinePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(WxLinePainter oldDelegate) {
-    return oldDelegate.color != color ||
+  bool shouldRepaint(WxDividerPainter oldDelegate) {
+    return listEquals(oldDelegate.pattern, pattern) ||
+        oldDelegate.color != color ||
         oldDelegate.gradient != gradient ||
         oldDelegate.thickness != thickness ||
         oldDelegate.paintBuilder != paintBuilder;
