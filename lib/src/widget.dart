@@ -14,7 +14,8 @@ class WxDivider extends StatelessWidget {
     this.paint,
     this.align = WxDividerAlign.center,
     this.child,
-  });
+  })  : assert(thickness == null || thickness > 0),
+        assert(count == null || count > 0);
 
   /// A constant representing a solid border style.
   static const solid = WxLinePainter.solid;
@@ -57,41 +58,45 @@ class WxDivider extends StatelessWidget {
     final effectiveCount = count ?? 1;
     final effectiveSpacing = spacing ?? 2.0;
 
-    final line = Padding(
-      padding: const EdgeInsets.all(0),
-      child: CustomPaint(
-        foregroundPainter: WxLinePainter(
-          pattern: pattern,
-          color: effectiveColor,
-          gradient: gradient,
-          thickness: effectiveThickness,
-          paintBuilder: paint,
-        ),
-        size: Size(double.infinity, effectiveThickness),
+    // Build single line
+    Widget result = CustomPaint(
+      foregroundPainter: WxLinePainter(
+        pattern: pattern,
+        color: effectiveColor,
+        gradient: gradient,
+        thickness: effectiveThickness,
+        paintBuilder: paint,
       ),
+      size: Size(double.infinity, effectiveThickness),
     );
 
-    if (child == null) return line;
+    // Returns single line
+    if (effectiveCount == 1) return result;
 
-    final lines = Column(
+    // Build multiple lines
+    result = Column(
       mainAxisSize: MainAxisSize.min,
       children: List<Widget>.generate(effectiveCount, (i) {
         if (i > 0) {
           return Padding(
             padding: EdgeInsets.only(top: effectiveSpacing),
-            child: line,
+            child: result,
           );
         }
-        return line;
+        return result;
       }),
     );
 
+    // Returns without child
+    if (child == null) return result;
+
+    // Returns with child
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (align != WxDividerAlign.start) Expanded(child: lines),
+        if (align != WxDividerAlign.start) Expanded(child: result),
         child!,
-        if (align != WxDividerAlign.end) Expanded(child: lines),
+        if (align != WxDividerAlign.end) Expanded(child: result),
       ],
     );
   }
