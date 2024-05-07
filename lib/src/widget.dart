@@ -11,7 +11,7 @@ class WxDivider extends StatelessWidget {
     this.thickness,
     this.lines,
     this.spacing,
-    this.paint,
+    this.formatter,
     this.align = WxDividerAlign.center,
     this.child,
   })  : assert(thickness == null || thickness > 0),
@@ -47,7 +47,7 @@ class WxDivider extends StatelessWidget {
   /// Lines spacing
   final double? spacing;
 
-  final PaintBuilder? paint;
+  final PaintFormatter? formatter;
 
   /// child align
   final WxDividerAlign align;
@@ -68,7 +68,7 @@ class WxDivider extends StatelessWidget {
         color: effectiveColor,
         gradient: gradient,
         thickness: effectiveThickness,
-        paintBuilder: paint,
+        formatter: formatter,
       ),
       size: Size(double.infinity, effectiveThickness),
     );

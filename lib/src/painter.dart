@@ -15,7 +15,7 @@ class WxDividerPainter extends CustomPainter {
     this.color = const Color(0xFF000000),
     this.gradient,
     this.thickness = 1,
-    this.paintBuilder,
+    this.formatter,
   });
 
   /// A constant representing a solid border style.
@@ -42,7 +42,8 @@ class WxDividerPainter extends CustomPainter {
   /// The thickness of the line drawn within the divider.
   final double thickness;
 
-  final PaintBuilder? paintBuilder;
+  /// Paint formatter
+  final PaintFormatter? formatter;
 
   /// Checks if the border style is solid (pattern is equal to `WxBorderStyle.solid.pattern`).
   bool get isSolid => listEquals(pattern, solid);
@@ -59,8 +60,8 @@ class WxDividerPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..shader = gradient?.createShader(rect);
 
-    if (paintBuilder != null) {
-      paintBuilder!(paint, rect);
+    if (formatter != null) {
+      formatter!(paint, rect);
     }
 
     if (isSolid) {
@@ -97,6 +98,6 @@ class WxDividerPainter extends CustomPainter {
         oldDelegate.color != color ||
         oldDelegate.gradient != gradient ||
         oldDelegate.thickness != thickness ||
-        oldDelegate.paintBuilder != paintBuilder;
+        oldDelegate.formatter != formatter;
   }
 }
