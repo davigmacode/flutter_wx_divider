@@ -119,7 +119,7 @@ class WxDivider extends StatelessWidget {
     );
 
     // Returns single line
-    if (effectiveCount == 1) {
+    if (effectiveCount == 1 && child == null) {
       return Padding(
         padding: effectiveIndent,
         child: result,
