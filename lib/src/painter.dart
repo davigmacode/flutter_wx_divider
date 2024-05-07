@@ -14,7 +14,7 @@ class WxLinePainter extends CustomPainter {
     this.pattern = WxLinePainter.solid,
     this.color = const Color(0xFF000000),
     this.gradient,
-    this.width = 1,
+    this.thickness = 1,
     this.paintBuilder,
   });
 
@@ -39,16 +39,8 @@ class WxLinePainter extends CustomPainter {
   /// A gradient to use for painting the border.
   final Gradient? gradient;
 
-  /// The width of this side of the border, in logical pixels.
-  ///
-  /// Setting width to 0.0 will result in a hairline border. This means that
-  /// the border will have the width of one physical pixel. Hairline
-  /// rendering takes shortcuts when the path overlaps a pixel more than once.
-  /// This means that it will render faster than otherwise, but it might
-  /// double-hit pixels, giving it a slightly darker/lighter result.
-  ///
-  /// To omit the border entirely, set the [style] to [BorderStyle.none].
-  final double width;
+  /// The thickness of the line drawn within the divider.
+  final double thickness;
 
   final PaintBuilder? paintBuilder;
 
@@ -63,7 +55,7 @@ class WxLinePainter extends CustomPainter {
     final rect = Offset.zero & size;
     final Paint paint = Paint()
       ..color = color
-      ..strokeWidth = width
+      ..strokeWidth = thickness
       ..style = PaintingStyle.stroke
       ..shader = gradient?.createShader(rect);
 
@@ -77,25 +69,25 @@ class WxLinePainter extends CustomPainter {
     }
 
     final Path path = Path();
-    final dy = width / 2;
+    final dy = rect.center.dy;
 
     int index = 0;
     double distance = 0;
+    double length = 0;
     bool draw = true;
     while (distance < size.width) {
       if (index >= pattern.length) {
         index = 0;
       }
-      final double len = pattern[index++] * width;
+      length = pattern[index++] * thickness;
       if (draw) {
         path
           ..moveTo(distance, dy)
-          ..lineTo(distance + len, dy);
+          ..lineTo(distance + length, dy);
       }
-      distance += len;
+      distance += length;
       draw = !draw;
     }
-
     canvas.drawPath(path, paint);
   }
 
@@ -103,7 +95,7 @@ class WxLinePainter extends CustomPainter {
   bool shouldRepaint(WxLinePainter oldDelegate) {
     return oldDelegate.color != color ||
         oldDelegate.gradient != gradient ||
-        oldDelegate.width != width ||
+        oldDelegate.thickness != thickness ||
         oldDelegate.paintBuilder != paintBuilder;
   }
 }

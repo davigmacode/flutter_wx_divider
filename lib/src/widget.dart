@@ -6,45 +6,43 @@ class WxDivider extends StatelessWidget {
   const WxDivider({
     super.key,
     this.pattern = WxDivider.solid,
-    this.color = const Color(0xFF000000),
+    this.color,
     this.gradient,
-    this.width = 1,
+    this.thickness,
+    this.count,
+    this.spacing,
     this.paint,
     this.align = WxDividerAlign.center,
     this.child,
-  }) : assert(pattern.length > 0);
+  });
 
   /// A constant representing a solid border style.
-  static const solid = [1.0, 0.0];
+  static const solid = WxLinePainter.solid;
 
   /// A constant representing a dotted border style.
-  static const dotted = [1.0];
+  static const dotted = WxLinePainter.dotted;
 
   /// A constant representing a dashed border style.
-  static const dashed = [3.0, 2.0];
+  static const dashed = WxLinePainter.dashed;
 
   /// A constant representing a Morse code-like border style.
-  static const morse = [3.0, 2.0, 1.0, 2.0];
+  static const morse = WxLinePainter.morse;
 
   /// The list of doubles defining the on/off durations of the border pattern.
   final List<double> pattern;
 
-  /// The color of this side of the border.
-  final Color color;
+  /// The color of this side of the border. overrides if gradient not null
+  final Color? color;
 
   /// A gradient to use for painting the border.
   final Gradient? gradient;
 
-  /// The width of this side of the border, in logical pixels.
-  ///
-  /// Setting width to 0.0 will result in a hairline border. This means that
-  /// the border will have the width of one physical pixel. Hairline
-  /// rendering takes shortcuts when the path overlaps a pixel more than once.
-  /// This means that it will render faster than otherwise, but it might
-  /// double-hit pixels, giving it a slightly darker/lighter result.
-  ///
-  /// To omit the border entirely, set the [style] to [BorderStyle.none].
-  final double width;
+  /// The thickness of the line drawn within the divider.
+  final double? thickness;
+
+  final int? count;
+
+  final double? spacing;
 
   final PaintBuilder? paint;
 
@@ -54,22 +52,46 @@ class WxDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final line = CustomPaint(
-      foregroundPainter: WxLinePainter(
-        pattern: pattern,
-        color: color,
-        gradient: gradient,
-        width: width,
-        paintBuilder: paint,
+    final effectiveColor = color ?? const Color(0xFF000000);
+    final effectiveThickness = thickness ?? 1;
+    final effectiveCount = count ?? 1;
+    final effectiveSpacing = spacing ?? 2.0;
+
+    final line = Padding(
+      padding: const EdgeInsets.all(0),
+      child: CustomPaint(
+        foregroundPainter: WxLinePainter(
+          pattern: pattern,
+          color: effectiveColor,
+          gradient: gradient,
+          thickness: effectiveThickness,
+          paintBuilder: paint,
+        ),
+        size: Size(double.infinity, effectiveThickness),
       ),
     );
 
     if (child == null) return line;
 
+    final lines = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: List<Widget>.generate(effectiveCount, (i) {
+        if (i > 0) {
+          return Padding(
+            padding: EdgeInsets.only(top: effectiveSpacing),
+            child: line,
+          );
+        }
+        return line;
+      }),
+    );
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(child: line),
+        Expanded(child: lines),
+        child!,
+        Expanded(child: lines),
       ],
     );
   }
