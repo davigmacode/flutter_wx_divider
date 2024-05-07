@@ -12,6 +12,7 @@ class WxDividerPainter extends CustomPainter {
   /// [shape] is required.
   WxDividerPainter({
     this.pattern = WxDividerPainter.solid,
+    this.direction = Axis.horizontal,
     this.color = const Color(0xFF000000),
     this.gradient,
     this.thickness = 1,
@@ -33,6 +34,8 @@ class WxDividerPainter extends CustomPainter {
   /// The list of doubles defining the on/off durations of the border pattern.
   final List<double> pattern;
 
+  final Axis direction;
+
   /// The color of this side of the border.
   final Color color;
 
@@ -51,6 +54,10 @@ class WxDividerPainter extends CustomPainter {
   /// Checks if the border style is non-solid (not equal to `WxBorderStyle.solid.pattern`).
   bool get isNonSolid => !isSolid;
 
+  bool get isHorizontal => direction == Axis.horizontal;
+
+  bool get isVertical => !isHorizontal;
+
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
@@ -65,26 +72,35 @@ class WxDividerPainter extends CustomPainter {
     }
 
     if (isSolid) {
-      canvas.drawLine(rect.centerLeft, rect.centerRight, paint);
+      final start = isHorizontal ? rect.centerLeft : rect.topCenter;
+      final end = isHorizontal ? rect.centerRight : rect.bottomCenter;
+      canvas.drawLine(start, end, paint);
       return;
     }
 
     final Path path = Path();
-    final dy = rect.center.dy;
+    final maxExtent = isHorizontal ? size.width : size.height;
+    final crossAxisPoint = isHorizontal ? rect.center.dy : rect.center.dx;
 
     int index = 0;
     double distance = 0;
     double length = 0;
     bool draw = true;
-    while (distance < size.width) {
+    while (distance < maxExtent) {
       if (index >= pattern.length) {
         index = 0;
       }
       length = pattern[index++] * thickness;
       if (draw) {
-        path
-          ..moveTo(distance, dy)
-          ..lineTo(distance + length, dy);
+        if (isHorizontal) {
+          path
+            ..moveTo(distance, crossAxisPoint)
+            ..lineTo(distance + length, crossAxisPoint);
+        } else {
+          path
+            ..moveTo(crossAxisPoint, distance)
+            ..lineTo(crossAxisPoint, distance + length);
+        }
       }
       distance += length;
       draw = !draw;

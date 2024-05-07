@@ -6,6 +6,7 @@ class WxDivider extends StatelessWidget {
   const WxDivider({
     super.key,
     this.pattern = WxDivider.solid,
+    this.direction = Axis.horizontal,
     this.color,
     this.gradient,
     this.thickness,
@@ -29,8 +30,10 @@ class WxDivider extends StatelessWidget {
   /// A constant representing a Morse code-like border style.
   static const morse = WxDividerPainter.morse;
 
-  /// The list of doubles defining the on/off durations of the border pattern.
+  /// The circular list of doubles defining the on/off length of the border pattern.
   final List<double> pattern;
+
+  final Axis direction;
 
   /// The color of this side of the border. overrides if gradient not null
   final Color? color;
@@ -47,12 +50,17 @@ class WxDivider extends StatelessWidget {
   /// Lines spacing
   final double? spacing;
 
+  /// Paint formatter
   final PaintFormatter? formatter;
 
   /// child align
   final WxDividerAlign align;
 
   final Widget? child;
+
+  bool get isHorizontal => direction == Axis.horizontal;
+
+  bool get isVertical => !isHorizontal;
 
   @override
   Widget build(BuildContext context) {
@@ -64,25 +72,32 @@ class WxDivider extends StatelessWidget {
     // Build single line
     Widget result = CustomPaint(
       foregroundPainter: WxDividerPainter(
+        direction: direction,
         pattern: pattern,
         color: effectiveColor,
         gradient: gradient,
         thickness: effectiveThickness,
         formatter: formatter,
       ),
-      size: Size(double.infinity, effectiveThickness),
+      size: isHorizontal
+          ? Size(double.infinity, effectiveThickness)
+          : Size(effectiveThickness, double.infinity),
     );
 
     // Returns single line
     if (effectiveCount == 1) return result;
 
     // Build multiple lines
-    result = Column(
+    result = Flex(
+      direction: isHorizontal ? Axis.vertical : Axis.horizontal,
       mainAxisSize: MainAxisSize.min,
       children: List<Widget>.generate(effectiveCount, (i) {
         if (i > 0) {
           return Padding(
-            padding: EdgeInsets.only(top: effectiveSpacing),
+            padding: EdgeInsets.only(
+              top: isHorizontal ? effectiveSpacing : 0,
+              left: isVertical ? effectiveSpacing : 0,
+            ),
             child: result,
           );
         }
@@ -94,7 +109,8 @@ class WxDivider extends StatelessWidget {
     if (child == null) return result;
 
     // Returns with child
-    return Row(
+    return Flex(
+      direction: direction,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (align != WxDividerAlign.start) Expanded(child: result),
