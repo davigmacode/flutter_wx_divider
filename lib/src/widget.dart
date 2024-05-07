@@ -120,3 +120,30 @@ class WxDivider extends StatelessWidget {
     );
   }
 }
+
+class WxVerticalDivider extends WxDivider {
+  const WxVerticalDivider({
+    super.key,
+    super.pattern = WxDivider.solid,
+    super.color,
+    super.gradient,
+    super.thickness,
+    super.lines,
+    super.spacing,
+    super.formatter,
+    super.align = WxDividerAlign.center,
+    super.child,
+  }) : super(direction: Axis.vertical);
+
+  /// A constant representing a solid border style.
+  static const solid = WxDividerPainter.solid;
+
+  /// A constant representing a dotted border style.
+  static const dotted = WxDividerPainter.dotted;
+
+  /// A constant representing a dashed border style.
+  static const dashed = WxDividerPainter.dashed;
+
+  /// A constant representing a Morse code-like border style.
+  static const morse = WxDividerPainter.morse;
+}
