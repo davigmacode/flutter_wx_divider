@@ -22,7 +22,7 @@ class WxLinePainter extends CustomPainter {
   static const solid = [1.0, 0.0];
 
   /// A constant representing a dotted border style.
-  static const dotted = [1.0];
+  static const dotted = [1.0, 2.0];
 
   /// A constant representing a dashed border style.
   static const dashed = [3.0, 2.0];
@@ -77,7 +77,7 @@ class WxLinePainter extends CustomPainter {
     }
 
     final Path path = Path();
-    final dy = size.height / 2;
+    final dy = width / 2;
 
     int index = 0;
     double distance = 0;
