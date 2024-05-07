@@ -9,25 +9,25 @@ class WxDivider extends StatelessWidget {
     this.color,
     this.gradient,
     this.thickness,
-    this.count,
+    this.lines,
     this.spacing,
     this.paint,
     this.align = WxDividerAlign.center,
     this.child,
   })  : assert(thickness == null || thickness > 0),
-        assert(count == null || count > 0);
+        assert(lines == null || lines > 0);
 
   /// A constant representing a solid border style.
-  static const solid = WxLinePainter.solid;
+  static const solid = WxDividerPainter.solid;
 
   /// A constant representing a dotted border style.
-  static const dotted = WxLinePainter.dotted;
+  static const dotted = WxDividerPainter.dotted;
 
   /// A constant representing a dashed border style.
-  static const dashed = WxLinePainter.dashed;
+  static const dashed = WxDividerPainter.dashed;
 
   /// A constant representing a Morse code-like border style.
-  static const morse = WxLinePainter.morse;
+  static const morse = WxDividerPainter.morse;
 
   /// The list of doubles defining the on/off durations of the border pattern.
   final List<double> pattern;
@@ -41,12 +41,15 @@ class WxDivider extends StatelessWidget {
   /// The thickness of the line drawn within the divider.
   final double? thickness;
 
-  final int? count;
+  /// Lines count
+  final int? lines;
 
+  /// Lines spacing
   final double? spacing;
 
   final PaintBuilder? paint;
 
+  /// child align
   final WxDividerAlign align;
 
   final Widget? child;
@@ -55,12 +58,12 @@ class WxDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveColor = color ?? const Color(0xFF000000);
     final effectiveThickness = thickness ?? 1;
-    final effectiveCount = count ?? 1;
+    final effectiveCount = lines ?? 1;
     final effectiveSpacing = spacing ?? 2.0;
 
     // Build single line
     Widget result = CustomPaint(
-      foregroundPainter: WxLinePainter(
+      foregroundPainter: WxDividerPainter(
         pattern: pattern,
         color: effectiveColor,
         gradient: gradient,
