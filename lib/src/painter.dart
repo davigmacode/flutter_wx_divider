@@ -17,7 +17,9 @@ class WxDividerPainter extends CustomPainter {
     this.gradient,
     this.thickness = 1,
     this.formatter,
-  });
+  })  : assert(pattern.isNotEmpty, 'The pattern should not be empty'),
+        assert(pattern.first > 0 || pattern.length > 1,
+            'If the pattern has only a single value, it must be greater than 0');
 
   /// A constant representing a solid border style.
   static const solid = [1.0, 0.0];
