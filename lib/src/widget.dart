@@ -89,9 +89,9 @@ class WxDivider extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(child: lines),
+        if (align != WxDividerAlign.start) Expanded(child: lines),
         child!,
-        Expanded(child: lines),
+        if (align != WxDividerAlign.end) Expanded(child: lines),
       ],
     );
   }
