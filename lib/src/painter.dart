@@ -12,14 +12,14 @@ class WxDividerPainter extends CustomPainter {
   /// - [color]: The color of the divider. Defaults to `black`.
   /// - [gradient]: A gradient to use for painting the divider.
   /// - [thickness]: The thickness of the line drawn within the divider. Defaults to 1.0.
-  /// - [formatter]: A callback that allows customization of the paint object before drawing.
+  /// - [onPaint]: A callback that allows customization of the paint object before drawing.
   WxDividerPainter({
     this.pattern = WxDividerPainter.solid,
     this.direction = Axis.horizontal,
     this.color = const Color(0xFF000000),
     this.gradient,
     this.thickness = 1,
-    this.formatter,
+    this.onPaint,
   })  : assert(pattern.isNotEmpty, 'The pattern should not be empty'),
         assert(pattern.first > 0 || pattern.length > 1,
             'If the pattern has only a single value, it must be greater than 0');
@@ -52,7 +52,7 @@ class WxDividerPainter extends CustomPainter {
   final double thickness;
 
   /// A callback that allows customization of the paint object before drawing.
-  final PaintFormatter? formatter;
+  final PaintCallback? onPaint;
 
   /// Whether the divider style is solid (pattern is equal to `solid.pattern`).
   bool get isSolid => listEquals(pattern, solid);
@@ -75,8 +75,8 @@ class WxDividerPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..shader = gradient?.createShader(rect);
 
-    if (formatter != null) {
-      formatter!(paint, rect);
+    if (onPaint != null) {
+      onPaint!(paint, rect);
     }
 
     if (isSolid) {
@@ -124,6 +124,6 @@ class WxDividerPainter extends CustomPainter {
         oldDelegate.color != color ||
         oldDelegate.gradient != gradient ||
         oldDelegate.thickness != thickness ||
-        oldDelegate.formatter != formatter;
+        oldDelegate.onPaint != onPaint;
   }
 }

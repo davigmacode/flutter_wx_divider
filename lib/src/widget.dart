@@ -19,7 +19,7 @@ class WxDivider extends StatelessWidget {
   /// - [lines]: The number of lines to draw. Defaults to 1.
   /// - [spacing]: The spacing between lines. Defaults to 2.0.
   /// - [indent]: The amount of indent applied to the divider on each side.
-  /// - [formatter]: A callback that allows customization of the paint object before drawing.
+  /// - [onPaint]: A callback that allows customization of the paint object before drawing.
   /// - [align]: The alignment of the child widget within the divider. Defaults to `WxDividerAlign.center`.
   /// - [child]: The widget to display within the divider.
   const WxDivider({
@@ -31,7 +31,7 @@ class WxDivider extends StatelessWidget {
     this.thickness,
     this.lines,
     this.spacing,
-    this.formatter,
+    this.onPaint,
     this.align = WxDividerAlign.center,
     this.indent,
     this.child,
@@ -76,7 +76,7 @@ class WxDivider extends StatelessWidget {
   final EdgeInsetsGeometry? indent;
 
   /// A callback that allows customization of the paint object before drawing.
-  final PaintFormatter? formatter;
+  final PaintCallback? onPaint;
 
   /// The alignment of the child widget within the divider.
   final WxDividerAlign align;
@@ -111,7 +111,7 @@ class WxDivider extends StatelessWidget {
         color: effectiveColor,
         gradient: gradient,
         thickness: effectiveThickness,
-        formatter: formatter,
+        onPaint: onPaint,
       ),
       size: isHorizontal
           ? Size(double.infinity, effectiveThickness)
@@ -182,7 +182,7 @@ class WxVerticalDivider extends WxDivider {
     super.lines,
     super.spacing,
     super.indent,
-    super.formatter,
+    super.onPaint,
     super.align = WxDividerAlign.center,
     super.child,
   }) : super(direction: Axis.vertical);
