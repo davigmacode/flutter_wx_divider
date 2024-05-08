@@ -16,6 +16,7 @@ class WxDivider extends StatelessWidget {
   /// - [color]: The color of this side of the divider. Overrides if gradient is not `null`.
   /// - [gradient]: A gradient to use for painting the divider.
   /// - [thickness]: The thickness of the line drawn within the divider.
+  /// - [extent]: Representing the minimum width or height of the divider, depending on its direction..
   /// - [lines]: The number of lines to draw. Defaults to 1.
   /// - [spacing]: The spacing between lines. Defaults to 2.0.
   /// - [indent]: The amount of indent applied to the divider on each side.
@@ -31,6 +32,7 @@ class WxDivider extends StatelessWidget {
     this.thickness,
     this.lines,
     this.spacing,
+    this.extent,
     this.onPaint,
     this.align = WxDividerAlign.center,
     this.indent,
@@ -72,6 +74,13 @@ class WxDivider extends StatelessWidget {
   /// The spacing between lines.
   final double? spacing;
 
+  /// Representing the minimum width or height of the divider, depending on its direction.
+  ///
+  /// For horizontal dividers (direction: Axis.horizontal), extent defines the minimum height.
+  ///
+  /// For vertical dividers (direction: Axis.vertical), extent defines the minimum width.
+  final double? extent;
+
   /// The amount of indent applied to the divider on each side.
   final EdgeInsetsGeometry? indent;
 
@@ -90,18 +99,14 @@ class WxDivider extends StatelessWidget {
   /// Whether the divider direction is vertical.
   bool get isVertical => !isHorizontal;
 
-  /// The amount of indent applied to the divider on each side.
-  EdgeInsetsGeometry get defaultIndent => isHorizontal
-      ? const EdgeInsets.symmetric(vertical: 8)
-      : const EdgeInsets.symmetric(horizontal: 8);
-
   @override
   Widget build(BuildContext context) {
     final effectiveColor = color ?? const Color(0xFF000000);
     final effectiveThickness = thickness ?? 1;
     final effectiveCount = lines ?? 1;
     final effectiveSpacing = spacing ?? 2.0;
-    final effectiveIndent = indent ?? defaultIndent;
+    final effectiveIndent = indent ?? EdgeInsets.zero;
+    final effectiveExtent = extent ?? 26.0;
 
     // Build single line
     Widget result = CustomPaint(
@@ -118,11 +123,20 @@ class WxDivider extends StatelessWidget {
           : Size(effectiveThickness, double.infinity),
     );
 
+    // The line extent depending on its direction.
+    final constraints = BoxConstraints(
+      minHeight: isHorizontal ? effectiveExtent : 0,
+      minWidth: isVertical ? effectiveExtent : 0.0,
+    );
+
     // Returns single line
     if (effectiveCount == 1 && child == null) {
       return Padding(
         padding: effectiveIndent,
-        child: result,
+        child: ConstrainedBox(
+          constraints: constraints,
+          child: Center(child: result),
+        ),
       );
     }
 
@@ -148,21 +162,27 @@ class WxDivider extends StatelessWidget {
     if (child == null) {
       return Padding(
         padding: effectiveIndent,
-        child: result,
+        child: ConstrainedBox(
+          constraints: constraints,
+          child: Center(child: result),
+        ),
       );
     }
 
     // Returns with child
     return Padding(
       padding: effectiveIndent,
-      child: Flex(
-        direction: direction,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (align != WxDividerAlign.start) Expanded(child: result),
-          child!,
-          if (align != WxDividerAlign.end) Expanded(child: result),
-        ],
+      child: ConstrainedBox(
+        constraints: constraints,
+        child: Flex(
+          direction: direction,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (align != WxDividerAlign.start) Expanded(child: result),
+            child!,
+            if (align != WxDividerAlign.end) Expanded(child: result),
+          ],
+        ),
       ),
     );
   }
