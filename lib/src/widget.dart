@@ -181,6 +181,7 @@ class WxVerticalDivider extends WxDivider {
     super.thickness,
     super.lines,
     super.spacing,
+    super.indent,
     super.formatter,
     super.align = WxDividerAlign.center,
     super.child,
