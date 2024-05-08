@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:wx_divider/src/painter.dart';
+import 'painter.dart';
+import 'theme.dart';
 import 'types.dart';
 
 /// A widget that displays a divider with a configurable style, pattern, and child.
@@ -25,7 +26,7 @@ class WxDivider extends StatelessWidget {
   /// - [child]: The widget to display within the divider.
   const WxDivider({
     super.key,
-    this.pattern = WxDivider.solid,
+    this.pattern,
     this.direction = Axis.horizontal,
     this.color,
     this.gradient,
@@ -38,6 +39,7 @@ class WxDivider extends StatelessWidget {
     this.indent,
     this.child,
   })  : assert(thickness == null || thickness > 0),
+        assert(extent == null || extent >= 0),
         assert(lines == null || lines > 0),
         assert(spacing == null || spacing >= 0);
 
@@ -54,7 +56,7 @@ class WxDivider extends StatelessWidget {
   static const morse = WxDividerPainter.morse;
 
   /// The circular list of doubles defining the on/off length of the divider pattern.
-  final List<double> pattern;
+  final List<double>? pattern;
 
   /// The direction of the divider.
   final Axis direction;
@@ -101,20 +103,23 @@ class WxDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveColor = color ?? const Color(0xFF000000);
-    final effectiveThickness = thickness ?? 1;
-    final effectiveCount = lines ?? 1;
-    final effectiveSpacing = spacing ?? 2.0;
-    final effectiveIndent = indent ?? EdgeInsets.zero;
-    final effectiveExtent = extent ?? 26.0;
+    final theme = WxDividerTheme.of(context);
+    final effectivePattern = pattern ?? theme.pattern;
+    final effectiveColor = color ?? theme.color;
+    final effectiveGradient = gradient ?? theme.gradient;
+    final effectiveThickness = thickness ?? theme.thickness;
+    final effectiveExtent = extent ?? theme.extent;
+    final effectiveLines = lines ?? theme.lines;
+    final effectiveSpacing = spacing ?? theme.spacing;
+    final effectiveIndent = indent ?? theme.indent;
 
     // Build single line
     Widget result = CustomPaint(
       foregroundPainter: WxDividerPainter(
         direction: direction,
-        pattern: pattern,
+        pattern: effectivePattern,
         color: effectiveColor,
-        gradient: gradient,
+        gradient: effectiveGradient,
         thickness: effectiveThickness,
         onPaint: onPaint,
       ),
@@ -130,7 +135,7 @@ class WxDivider extends StatelessWidget {
     );
 
     // Returns single line
-    if (effectiveCount == 1 && child == null) {
+    if (effectiveLines == 1 && child == null) {
       return Padding(
         padding: effectiveIndent,
         child: ConstrainedBox(
@@ -144,7 +149,7 @@ class WxDivider extends StatelessWidget {
     result = Flex(
       direction: isHorizontal ? Axis.vertical : Axis.horizontal,
       mainAxisSize: MainAxisSize.min,
-      children: List<Widget>.generate(effectiveCount, (i) {
+      children: List<Widget>.generate(effectiveLines, (i) {
         if (i > 0) {
           return Padding(
             padding: EdgeInsets.only(
@@ -195,15 +200,16 @@ class WxVerticalDivider extends WxDivider {
   /// The same parameters as `WxDivider` apply.
   const WxVerticalDivider({
     super.key,
-    super.pattern = WxDivider.solid,
+    super.pattern,
     super.color,
     super.gradient,
     super.thickness,
+    super.extent,
     super.lines,
     super.spacing,
     super.indent,
     super.onPaint,
-    super.align = WxDividerAlign.center,
+    super.align,
     super.child,
   }) : super(direction: Axis.vertical);
 
