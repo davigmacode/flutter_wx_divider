@@ -100,14 +100,16 @@ class WxDividerPainter extends CustomPainter {
       }
       length = pattern[index++] * thickness;
       if (draw) {
+        final point = distance + length;
+        final dest = point > maxExtent ? maxExtent : point;
         if (isHorizontal) {
           path
             ..moveTo(distance, crossAxisPoint)
-            ..lineTo(distance + length, crossAxisPoint);
+            ..lineTo(dest, crossAxisPoint);
         } else {
           path
             ..moveTo(crossAxisPoint, distance)
-            ..lineTo(crossAxisPoint, distance + length);
+            ..lineTo(crossAxisPoint, dest);
         }
       }
       distance += length;
