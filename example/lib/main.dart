@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:wx_divider/wx_divider.dart';
 import 'package:wx_text/wx_text.dart';
 
@@ -34,46 +33,39 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrapper(
       children: <Widget>[
-        ListTile(
-          title: const WxText.displayMedium(
-            'WxDivider',
-            fontWeight: FontWeight.bold,
-            outlineColor: Colors.white,
-            outlineWidth: 1,
-            shadows: [
-              Shadow(
-                color: Colors.green,
-                blurRadius: 3,
-              ),
+        const WxText.displayMedium(
+          'WxDivider',
+          textAlign: TextAlign.center,
+          fontWeight: FontWeight.bold,
+          gradient: LinearGradient(
+            colors: [
+              Colors.green,
+              Colors.blue,
             ],
-            gradient: LinearGradient(
-              colors: [
-                Colors.green,
-                Colors.blue,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          subtitle: WxAnimatedText(
-            duration: const Duration(milliseconds: 2500),
-            transition: WxAnimatedText.shimmer(
-              colors: [
-                Colors.black87,
-                Colors.red,
-                Colors.amber,
-                Colors.black87,
-                Colors.black87,
-              ],
-              stops: [0.0, 0.35, 0.5, 0.65, 1.0],
-            ),
-            child: const WxText.bodyLarge(
-              'A widget that displays a divider with a configurable style, pattern, and child.',
-            ),
-          ),
-          contentPadding: EdgeInsets.zero,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 5),
+        WxAnimatedText(
+          duration: const Duration(milliseconds: 2500),
+          transition: WxAnimatedText.shimmer(
+            colors: [
+              Colors.black87,
+              Colors.red,
+              Colors.amber,
+              Colors.black87,
+              Colors.black87,
+            ],
+            stops: [0.0, 0.35, 0.5, 0.65, 1.0],
+          ),
+          child: const WxText.bodyLarge(
+            'A widget that displays a divider with a configurable line pattern, line count, and gradient. It can even have a child widget.',
+            height: 1.5,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: 30),
         const Example(
           title: 'Single Line',
           child: Column(
